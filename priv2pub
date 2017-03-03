@@ -1,0 +1,7 @@
+#!/usr/local/bin/python3
+
+import bitcoin
+import sys
+
+d = sys.argv[1]
+print(str(bitcoin.privtopub(d)))

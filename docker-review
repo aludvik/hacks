@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+
+import json
+import subprocess
+import sys
+
+next_commit = sys.argv[1]
+
+try:
+    printfield = sys.argv[2].split('.')
+except BaseException:
+    printfield = 'all'
+
+done = False
+i = 0
+while not done:
+    try:
+        inspect = subprocess.check_output(
+            ["docker", "inspect", "%s" % next_commit],
+        ).decode('utf-8')
+
+        info = json.loads(inspect)
+        next_commit = info[0]["ContainerConfig"]["Image"].split(":")[1]
+
+        if printfield == 'all':
+            print(i, ":", info)
+        else:
+            info = info[0]
+            for key in printfield:
+                info = info[key]
+            print(i, ":", info)
+
+        i += 1
+
+    except subprocess.CalledProcessError:
+        done = True

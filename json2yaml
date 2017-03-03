@@ -1,0 +1,7 @@
+#!/usr/local/bin/python3
+
+import yaml
+import sys
+
+d = sys.argv[1]
+print(yaml.dump(yaml.load(d), default_flow_style=False))
