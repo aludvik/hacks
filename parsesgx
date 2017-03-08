@@ -12,26 +12,37 @@ output_name = sys.argv[2]
 with open(input_name) as fin:
     contents = fin.read()
 
-logs = [log.split('\t') for log in contents.split('\n\n')]
+print("Parsing YAML, this may take a couple minutes...")
+entries = contents.split('---')
+n = len(entries)
+i = 0
+data = []
+for entry in entries:
+    data.append(yaml.load(entry))
+    i += 1
+    if i % 25 == 0:
+        print("{:.2f}%".format(i / n * 100))
+
+data.sort(key=lambda d: float(d['timestamp']))
+print("done")
 
 fout = open(output_name, 'w')
 
-def create_writer(log, fout):
-    init = flatten(yaml.load(log[1]))
-    init['timestamp'] = log[0]
+def create_writer(datum, fout):
+    init = flatten(datum)
 
     writer = csv.DictWriter(fout, fieldnames=init.keys(), restval='', extrasaction='ignore')
     writer.writeheader()
 
     return writer
 
-writer = create_writer(logs[0], fout)
+writer = create_writer(data[0], fout)
 
-n = len(logs)
+n = len(data)
 i = 0
-for log in logs:
-    out = flatten(yaml.load(log[1]))
-    out['timestamp'] = log[0]
+print("Writing CSV file...")
+for datum in data:
+    out = flatten(datum)
     writer.writerow(out)
         
     i += 1
@@ -39,3 +50,4 @@ for log in logs:
         print("{:.2f}%".format(i / n * 100))
 
 fout.close()
+print("done")
