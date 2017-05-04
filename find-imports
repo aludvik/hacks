@@ -1,0 +1,3 @@
+#!/bin/bash
+
+grep -r -e "^import" -e "^from" $1 | sed "s/.*.py:\(.*$\)/\1/" | sort -u

@@ -1,0 +1,2 @@
+#!/bin/bash
+docker build . -f $(pwd)/docker/$1 -t $1

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+r=$1
+s=0
+shift 1
+echo "Running $* $r times"
+for i in $(seq $r)
+do
+    echo "Starting run $i/$r"
+    $*
+    if [ $? -eq 0 ]
+    then
+        s=$((s + 1))
+        echo "Finished run $i/$r"
+        echo "Success rate is $s/$i"
+    else
+        echo "Run $i/$r failed"
+    fi
+done

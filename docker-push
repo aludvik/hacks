@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker push "hyperledger/sawtooth-${1}:unstable"
