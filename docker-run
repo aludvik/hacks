@@ -1,2 +1,6 @@
 #!/bin/bash
-docker run -it -v $(pwd):/project/sawtooth-core $1 $2
+if [ ! -z $CARGO_REGISTRY ]
+then
+    cargo_registry_map=-v $CARGO_REGISTRY/:/root/.cargo/registry/
+fi
+docker run --rm -it $cargo_registry_map -v $(pwd):/project/sawtooth-core $1 $2
