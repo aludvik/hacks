@@ -1,0 +1,47 @@
+#!/bin/bash
+
+if [ -z $1 ]
+then
+  echo "$0 [trials] [output-dir] [script]"
+  echo ""
+  echo "Run [script] until failure, at most [trials] times and output logs to"
+  echo "[output-dir]. If in a git repo, tags the logs with the current commit"
+  echo "id."
+  echo ""
+  echo "trials: number of times to run the script on each commit before"
+  echo "  calling it a success"
+  echo "output-dir: a directory to store the logs from each trial"
+  echo "script: the test script to run"
+  exit 0
+fi
+
+trials=$1
+outdir=$2
+shift 2
+
+commit=$(git rev-parse HEAD)
+
+if [ $? -eq 0 ]
+then
+  echo "Testing commit $commit with $script"
+else
+  commit=""
+  echo "Testing $script"
+fi
+
+mkdir -p $outdir
+
+for trial in $(seq $trials)
+do
+    outfile=$outdir/$commit-trial-$trial
+    echo "Starting run $trial/$trials"
+    rm -f $outfile
+    $* > $outfile
+    if [ $? -ne 0 ]
+    then
+      echo "Run $trial failed"
+      exit 1
+    fi
+done
+
+exit 0

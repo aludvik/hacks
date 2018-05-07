@@ -1,0 +1,16 @@
+#!/bin/bash
+
+o=$1
+shift 1
+echo "Running '$*' until failure and outputing to '$o'"
+
+stop=0
+trial=1
+while [ $stop -eq 0 ]
+do
+    echo "Trial $trial"
+    rm -f $o
+    $* > $o
+    stop=$?
+    (( trial=$trial+1 ))
+done
